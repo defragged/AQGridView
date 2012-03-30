@@ -541,11 +541,29 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 }
 
 - (void) setContentSize: (CGSize) newSize
-{
-	if ( (_flags.contentSizeFillsBounds == 1) && (newSize.height < self.bounds.size.height) )
-		newSize.height = self.bounds.size.height;
-    if ( (_flags.contentSizeFillsBounds == 1) && (newSize.width < self.bounds.size.width) )
-		newSize.width = self.bounds.size.width;
+{	
+    if (_flags.contentSizeFillsBounds == 1){
+		
+		// Height
+		if(fmodf(newSize.height, self.bounds.size.height) != 0)
+		{
+			NSInteger numberOfPages = floor(newSize.height / self.bounds.size.height);
+			
+			numberOfPages++; // Add the partial page
+			
+			newSize.height = numberOfPages * self.bounds.size.height;
+		}
+		
+		// Width
+		if(fmodf(newSize.width, self.bounds.size.width) != 0)
+		{
+			NSInteger numberOfPages = floor(newSize.width / self.bounds.size.width);
+			
+			numberOfPages++; // Add the partial page
+			
+			newSize.width = numberOfPages * self.bounds.size.width;
+		}
+	}
 
 	if (self.gridFooterView)
 	{
